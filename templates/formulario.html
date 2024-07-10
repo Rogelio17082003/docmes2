@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prediccion de precios de telefonos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function clasificarInsecto(event) {
+            event.preventDefault();
+         
+            const spec_score = document.getElementById('spec_score').value;
+            const ram = document.getElementById('ram').value;
+            const external_memory = document.getElementById('external_memory').value;
+            const company = document.getElementById('company').value;
+            const screen_resolution = document.getElementById('screen_resolution').value;
+            const processor = document.getElementById('Processor').value;
+            
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `spec_score=${spec_score}&ram=${ram}&external_memory=${external_memory}&company=${company}&screen_resolution=${screen_resolution}&Processor=${processor}`,
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('resultado').innerText = 'Error: ' + data.error;
+                } else {
+                    document.getElementById('resultado').innerText = 'El Precio estimado es: ' + data.categoria;
+                }
+            })
+            .catch(error => {
+                document.getElementById('resultado').innerText = 'Error en la solicitud.';
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</head>
+<body>
+    <h1>Prediccion de precios de telefonos</h1>
+    <form id="formulario" onsubmit="clasificarInsecto(event)">
+        
+   
+
+        <label for="spec_score">Puntuación Específica:</label>
+        <input type="text" id="spec_score" name="spec_score"><br><br>
+
+        <label for="ram">RAM:</label>
+        <input type="text" id="ram" name="ram"><br><br>
+
+        <label for="external_memory">Memoria Externa:</label>
+        <input type="text" id="external_memory" name="external_memory"><br><br>
+
+        <label for="company">Compañía:</label>
+        <input type="text" id="company" name="company"><br><br>
+
+        <label for="screen_resolution">Resolución de Pantalla:</label>
+        <input type="text" id="screen_resolution" name="screen_resolution"><br><br>
+
+        <label for="Processor">Procesador:</label>
+        <input type="text" id="Processor" name="Processor"><br><br>
+       
+        <link rel="stylesheet" href="{{ url_for('static', filename='imagen1.png') }}">
+
+        <input type="submit" value="Enviar"> 
+    </form>
+    <p id="resultado"></p>
+</body>
+</html>
